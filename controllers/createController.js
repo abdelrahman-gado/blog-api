@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const { body } = require("express-validator");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
+const Post = require("../models/Post");
 
 // The signup controller is for easily create user instead of
 // writing directly to the DB, test the API
@@ -49,7 +50,7 @@ exports.login = [
   (req, res, next) => {
     const opts = { expiresIn: "7d" };
     const secret = process.env.SECRET;
-    jwt.sign({ email: req.user.email }, secret, opts, (err, token) => {
+    jwt.sign({ userId: req.user._id }, secret, opts, (err, token) => {
       if (err) {
         return res.status(401).json({ message: "Auth Failed" });
       }
@@ -66,9 +67,36 @@ exports.getUserPosts = (req, res, next) => {
   res.json({ message: "Not Implemented YET" });
 };
 
-exports.createPost = (req, res, next) => {
-  res.json({ message: "Not Implemneted YET" });
-};
+exports.createPost = [
+  body("title").escape(),
+  body("content").escape(),
+  passport.authenticate("jwt", { session: false }),
+
+  (req, res, next) => {
+    const { title, content, published } = req.body;
+    if (req.user) {
+      const newPost = new Post({
+        title: title,
+        content: content,
+        author: req.user,
+        timestamp: new Date(),
+        published: published,
+      });
+
+      newPost.save((err) => {
+        if (err) {
+          return res
+            .status(400)
+            .json({ message: "Error in creating the post" });
+        }
+
+        return res
+          .status(200)
+          .json({ message: "Post created successfully", post: newPost });
+      });
+    }
+  },
+];
 
 exports.getSpecificPost = (req, res, next) => {
   res.json({ message: "Not Implemneted YET" });
