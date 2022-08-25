@@ -69,7 +69,7 @@ exports.getUserPosts = [
     if (req.user) {
       const userId = req.user;
       Post.find({ author: userId })
-        .populate("author", '-_id firstname lastname email')
+        .populate("author", "-_id firstname lastname email")
         .select("-_id title content timestamp published")
         .exec((err, result) => {
           if (err) {
@@ -117,9 +117,28 @@ exports.createPost = [
   },
 ];
 
-exports.getSpecificPost = (req, res, next) => {
-  res.json({ message: "Not Implemneted YET" });
-};
+exports.getSpecificPost = [
+  passport.authenticate("jwt", { session: false }),
+  (req, res, next) => {
+    const id = req.params.postId;
+    if (req.user) {
+      Post.findById(id)
+        .populate("author", "-_id firstname lastname email")
+        .select("-_id title content timestamp published")
+        .exec((err, post) => {
+          if (err) {
+            return next(err);
+          }
+
+          if (!post) {
+            return res.status(204).json({ message: "No content" });
+          }
+
+          return res.status(200).json(post);
+        });
+    }
+  },
+];
 
 exports.updateSpecificPost = (req, res, next) => {
   res.json({ message: "Not Implemneted YET" });
