@@ -1,6 +1,8 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
-const { body, validationResult } = require("express-validator");
+const { body } = require("express-validator");
+const passport = require("passport");
+const jwt = require("jsonwebtoken");
 
 // The signup controller is for easily create user instead of
 // writing directly to the DB, test the API
@@ -37,9 +39,28 @@ exports.signup = (req, res, next) => {
   });
 };
 
-exports.login = (req, res, next) => {
-  res.json({ message: "Not Implemented YET" });
-};
+exports.login = [
+  body("email").escape(),
+
+  body("password").escape(),
+
+  passport.authenticate("local", { session: false }),
+
+  (req, res, next) => {
+    const opts = { expiresIn: "7d" };
+    const secret = process.env.SECRET;
+    jwt.sign({ email: req.user.email }, secret, opts, (err, token) => {
+      if (err) {
+        return res.status(401).json({ message: "Auth Failed" });
+      }
+
+      return res.status(200).json({
+        message: "Auth Passed (You are logged in)",
+        token,
+      });
+    });
+  },
+];
 
 exports.getUserPosts = (req, res, next) => {
   res.json({ message: "Not Implemented YET" });
