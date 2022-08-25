@@ -63,9 +63,28 @@ exports.login = [
   },
 ];
 
-exports.getUserPosts = (req, res, next) => {
-  res.json({ message: "Not Implemented YET" });
-};
+exports.getUserPosts = [
+  passport.authenticate("jwt", { session: false }),
+  (req, res, next) => {
+    if (req.user) {
+      const userId = req.user;
+      Post.find({ author: userId })
+        .populate("author", '-_id firstname lastname email')
+        .select("-_id title content timestamp published")
+        .exec((err, result) => {
+          if (err) {
+            return next(err);
+          }
+
+          if (result.length === 0) {
+            return res.status(204).json({ message: "No content" });
+          }
+
+          return res.json(result);
+        });
+    }
+  },
+];
 
 exports.createPost = [
   body("title").escape(),
