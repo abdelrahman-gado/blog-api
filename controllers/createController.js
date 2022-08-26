@@ -69,8 +69,8 @@ exports.getUserPosts = [
     if (req.user) {
       const userId = req.user;
       Post.find({ author: userId })
-        .populate("author", "-_id firstname lastname email")
-        .select("-_id title content timestamp published")
+        .populate("author", "firstname lastname email")
+        .select("title content timestamp published")
         .exec((err, result) => {
           if (err) {
             return next(err);
@@ -123,8 +123,8 @@ exports.getSpecificPost = [
     const id = req.params.postId;
     if (req.user) {
       Post.findById(id)
-        .populate("author", "-_id firstname lastname email")
-        .select("-_id title content timestamp published")
+        .populate("author", "firstname lastname email")
+        .select("title content timestamp published")
         .exec((err, post) => {
           if (err) {
             return res.status(400).json({ message: "Error in getting post" });
