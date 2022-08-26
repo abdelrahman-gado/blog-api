@@ -33,7 +33,22 @@ exports.getSpecificPost = (req, res, next) => {
 };
 
 exports.getCommentsOfSpecificPost = (req, res, next) => {
-  res.json({ message: "Not implemneted YET" });
+  const postId = req.params.postId;
+  Comment.find({ postId: postId })
+    .select("email content timestamp")
+    .exec((err, comments) => {
+      if (err) {
+        return res
+          .status(400)
+          .json({ message: "Error in getting comments of post" });
+      }
+
+      if (comments.length === 0) {
+        return res.status(204).json({ message: "No Content"});
+      }
+
+      return res.status(200).json(comments);
+    });
 };
 
 exports.createCommentOnSpecificPost = (req, res, next) => {
