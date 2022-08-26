@@ -1,4 +1,5 @@
 const Post = require("../models/Post");
+const Comment = require("../models/Comment");
 
 exports.getAllPublishedPosts = (req, res, next) => {
   Post.find({ published: true })
@@ -36,7 +37,24 @@ exports.getCommentsOfSpecificPost = (req, res, next) => {
 };
 
 exports.createCommentOnSpecificPost = (req, res, next) => {
-  res.json({ message: "Not implemneted YET" });
+  const { email, content, postId } = req.body;
+
+  const newComment = new Comment({
+    email: email,
+    content: content,
+    timestamp: new Date(),
+    postId: postId,
+  });
+
+  newComment.save((err) => {
+    if (err) {
+      return res.status(400).json({ message: "Error in creating comment" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "comment created successfully", newComment });
+  });
 };
 
 exports.getSpecificCommentOfSpecificPost = (req, res, next) => {
