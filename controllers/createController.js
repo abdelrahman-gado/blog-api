@@ -127,11 +127,11 @@ exports.getSpecificPost = [
         .select("-_id title content timestamp published")
         .exec((err, post) => {
           if (err) {
-            return next(err);
+            return res.status(400).json({ message: "Error in getting post" });
           }
 
           if (!post) {
-            return res.status(204).json({ message: "No content" });
+            return res.status(404).json({ message: "Post id Not Found" });
           }
 
           return res.status(200).json(post);
@@ -140,9 +140,26 @@ exports.getSpecificPost = [
   },
 ];
 
-exports.updateSpecificPost = (req, res, next) => {
-  res.json({ message: "Not Implemneted YET" });
-};
+exports.updateSpecificPost = [
+  passport.authenticate("jwt", { session: false }),
+  (req, res, next) => {
+    const { title, content, published } = req.body;
+    const postId = req.params.postId;
+    if (req.user) {
+      Post.findByIdAndUpdate(postId, { title, content, published }, (err) => {
+        if (err) {
+          return res.status(400).json({ message: "Error in updating post" });
+        }
+
+        return res
+          .status(200)
+          .json({ message: "Post is updated successfully" });
+      });
+    } else {
+      return res.status(401).json({ message: "Auth Failed" });
+    }
+  },
+];
 
 exports.deleteSpecificPost = [
   passport.authenticate("jwt", { session: false }),
@@ -150,13 +167,13 @@ exports.deleteSpecificPost = [
     const postId = req.params.postId;
     if (req.user) {
       Post.findByIdAndDelete(postId).exec((err, post) => {
-        if (err || !post) {
+        if (err) {
           return res.status(400).json({ message: "Error in deleting post" });
         }
 
         return res
           .status(200)
-          .json({ message: "Post is deleted successfully", post });
+          .json({ message: "Post is deleted successfully", deletedPost: post });
       });
     } else {
       return res.status(401).json({ message: "Auth Failed" });
