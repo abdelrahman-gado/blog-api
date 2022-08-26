@@ -3,7 +3,7 @@ const displayController = require("../controllers/displayController");
 
 const router = express.Router();
 
-router.get("/posts", displayController.getAllPosts);
+router.get("/posts", displayController.getAllPublishedPosts);
 
 router.get("/posts/:postId", displayController.getSpecificPost);
 
