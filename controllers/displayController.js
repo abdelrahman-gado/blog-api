@@ -1,9 +1,9 @@
 const Post = require("../models/Post");
 
-exports.getAllPosts = (req, res, next) => {
-  Post.find({})
-    .populate("author", "-_id firstname lastname email")
-    .select("-_id title content timestamp published")
+exports.getAllPublishedPosts = (req, res, next) => {
+  Post.find({ published: true })
+    .populate("author", "firstname lastname email")
+    .select("title content timestamp published")
     .exec((err, posts) => {
       if (err) {
         return res.status(400).json({ message: "Error in getting posts" });
