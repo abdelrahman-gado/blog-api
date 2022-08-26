@@ -144,6 +144,22 @@ exports.updateSpecificPost = (req, res, next) => {
   res.json({ message: "Not Implemneted YET" });
 };
 
-exports.deleteSpecificPost = (req, res, next) => {
-  res.json({ message: "Not Implemneted YET" });
-};
+exports.deleteSpecificPost = [
+  passport.authenticate("jwt", { session: false }),
+  (req, res, next) => {
+    const postId = req.params.postId;
+    if (req.user) {
+      Post.findByIdAndDelete(postId).exec((err, post) => {
+        if (err || !post) {
+          return res.status(400).json({ message: "Error in deleting post" });
+        }
+
+        return res
+          .status(200)
+          .json({ message: "Post is deleted successfully", post });
+      });
+    } else {
+      return res.status(401).json({ message: "Auth Failed" });
+    }
+  },
+];
