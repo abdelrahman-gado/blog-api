@@ -7,7 +7,7 @@ const commentSchema = new Schema({
   email: { type: String, required: true, maxLength: 100, lowercase: true },
   content: { type: String, required: true },
   timestamp: { type: Date, required: true },
-  toPost: { type: Schema.Types.ObjectId, required: true }
+  postId: { type: Schema.Types.ObjectId, required: true }
 });
 
 commentSchema.virtual("formattedTimestamp").get(function () {
