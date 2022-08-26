@@ -18,7 +18,17 @@ exports.getAllPublishedPosts = (req, res, next) => {
 };
 
 exports.getSpecificPost = (req, res, next) => {
-  res.json({ message: "Not implemneted YET" });
+  const postId = req.params.postId;
+  Post.findById(postId)
+    .populate("author", "firstname lastname email")
+    .select("title content timestamp")
+    .exec((err, post) => {
+      if (err) {
+        return res.status(400).json({ message: "Error in getting the post" });
+      }
+
+      return res.status(200).json({ post });
+    });
 };
 
 exports.getCommentsOfSpecificPost = (req, res, next) => {
