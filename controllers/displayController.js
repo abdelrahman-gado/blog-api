@@ -44,7 +44,7 @@ exports.getCommentsOfSpecificPost = (req, res, next) => {
       }
 
       if (comments.length === 0) {
-        return res.status(204).json({ message: "No Content"});
+        return res.status(204).json({ message: "No Content" });
       }
 
       return res.status(200).json(comments);
@@ -73,5 +73,14 @@ exports.createCommentOnSpecificPost = (req, res, next) => {
 };
 
 exports.getSpecificCommentOfSpecificPost = (req, res, next) => {
-  res.json({ message: "Not implemneted YET" });
+  const { postId, commentId } = req.params;
+  Comment.findOne({ _id: commentId, postId: postId }).exec((err, comment) => {
+    if (err) {
+      return res
+        .status(400)
+        .json({ message: "Error in Getting comment of that post" });
+    }
+
+    return res.status(200).json({ comment });
+  });
 };
