@@ -3,8 +3,8 @@
 This is a Simple REST API for Blog website using Expressjs, Passportjs and JWT.
 
 This API is consist of two main parts:
- 1 - for the clients of blog to display all published posts (for people that want to read and comment on your posts)
- 2 - for the user of blog to build the posts (for author to write, edit and publish your posts)
+ 1. for the clients of blog to display all published posts (for people that want to read and comment on your posts)
+ 2. for the user of blog to build the posts (for author to write, edit and publish your posts)
 
 The endpoints of API
  * for people that want to read and comment on your posts 
