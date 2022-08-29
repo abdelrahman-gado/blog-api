@@ -28,7 +28,7 @@ The endpoints of API
 * run the project ``` npm run devstart ```
 
 ### Database Models
-(https://user-images.githubusercontent.com/88284519/187178942-599e4494-c4ad-49ba-b720-954734a31b6d.png)
+[(https://user-images.githubusercontent.com/88284519/187178942-599e4494-c4ad-49ba-b720-954734a31b6d.png)]
 
 ### In this project, i used:
 * node
